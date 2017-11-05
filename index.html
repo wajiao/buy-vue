@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, width=device-width">
+	<link rel="stylesheet" type="text/css" href="css/index.css">
+</head>
+<body>
+
+<!-- 界面的组件渲染 -->
+<div id = 'app'>
+	<div class="nav clearfix">
+			<span class="goBack" v-on:click = "goBack"></span>
+			<span class="title">B-BUY</span>
+	</div>
+	<component v-bind:is="view"></component>
+</div>
+
+<!-- 主界面模板 -->
+<script type="text/template" id = 'home'>
+	<section id="home" class="home">
+	<!-- banner区域 -->
+	<ul class="banner-list clearfix" id = "banner">
+		<li v-for = 'item in banner'>
+				<img v-bind:src="'img/banner/'+item.url">	
+		</li>
+	</ul>
+	<!-- 图标分类入口-->
+	<ul class="type-list clearfix">
+		<li v-for = 'item in type'>
+			<a href="#/list/type/{{item.id}}">
+				<div class="img">
+					<img v-bind:src="'img/icon/'+item.url">
+				</div>
+				
+				<span>{{item.title}}</span>
+
+			</a>	
+		</li>
+	</ul>
+	<!-- topic-list区域 -->
+	<ul class="topic-list clearfix">
+		<li v-for = 'item in topic'>
+			<a href="#/list/type/{{item.id}}">
+				<img v-bind:src="'img/brand/'+item.img">
+				<!-- <span>{{item.title}}</span> -->
+			
+			<ul class="imgpro-list" >
+				<li v-for = "item in item.img_pro">
+					<div class="img">
+						<img v-bind:src="'img/brand/'+item.img">
+					</div>
+					<div class="slogan">{{item.slogan}}</div>
+				</li>
+			</ul>
+			</a>	
+		</li>
+	</ul>
+	<!-- like-list 区域-->
+	<ul class="like-list clearfix">
+		<h4>猜你喜欢</h4>
+		<li v-for = 'item in like'>
+			<a href="#/product">
+				<div class="img">
+					<img v-bind:src="'img/list/'+item.img">
+				</div>
+				
+				<span>{{item.brand}}</span>
+				<span>{{item.price}}</span>
+			</a>
+		</li>
+	</ul>
+	</section>
+</script>
+
+<!-- 列表页面模版 -->
+<script type="text/template" id="list">
+	<section class="list" id="list">
+		<!-- 品牌标语  -->
+		<p class="brand">
+		<span>brand</span><br>
+		<span>slogans,slogan,slogan</span><br>
+		
+		</p>
+		
+		<!-- 产品列表 -->
+		<ul class="pro-list clearfix">
+			<li v-for = 'item in list'>
+				<a href="#/product">
+					<div class="img">
+						<img v-bind:src="'img/list/'+item.img">
+					</div>
+					
+					<span>123{{item.brand}}</span>
+					<span>{{item.price}}</span>
+				</a>
+			</li>
+		</ul>
+		<div class="load-more" v-show="other.length" v-on:click="loadMore">
+			<span>MORE</span>
+			<span class="arrow"></span>
+		</div>
+	</section>
+</script>
+
+<!-- 产品详情页面 -->
+<script type="text/template" id="tpl_product">
+	<div class="inner">
+	<section class="product" id="product">
+		<!-- 产品展示图 -->
+		<ul class="pro clearfix">
+			<li v-for = 'item in img'>
+				<img v-bind:src="'img/topic/1/'+item.img">
+			</li>
+		</ul>
+		<!-- 产品信息图 -->
+		<ul class="info clearfix">
+			<li v-for = 'item in info_pro''>
+				{{item.brand}}<br>
+				{{item.slogan}}<br>
+				{{item.price}}
+
+			</li>
+		</ul> 
+		<!-- 交互操作 -->
+		<p class="pro-fun">
+				<span class="show-car" v-on:click = "myboxShow">Bag
+				<span class="bag_num">
+					{{list_num.num}}
+				</span></span>
+			<span class="go-car" v-on:click = "pannelShow">加入购物车</span>
+		</p>
+	</section>
+	<!-- 下单信息弹层面板 -->
+	<section class="pannel" id="pannel">
+		<div class="close" v-on:click = 'close'><span>X</span></div>
+		<div class="pro clearfix" v-for = "item in info_pro">
+			<div class="img">
+				<img v-bind:src="'img/topic/1/'+item.img">
+				
+			</div>
+			<div class="info">
+				<span>{{item.brand}}</span>
+				<span>{{item.slogan}}</span>
+				<span>{{item.price}}</span>
+			</div>	
+		</div>
+		<div class="color" v-on:click = "chooseColor">
+			<span>黑色</span><span>白色</span>
+		</div>
+		<div class="size" v-on:click = "chooseSize">
+			<span>S</span><span>M</span><span>L</span><span>XL</span>
+		</div>
+		<div class="num">
+			<span v-on:click = "Reduce">-</span><span>{{finnal_pro[0].num}}</span><span v-on:click = "Add">+</span>
+		</div>
+		<div class="btn">
+			<span v-on:click = 'addToCart'>srue</span>
+		</div>
+	</section>
+
+	<!-- 购物袋弹层面板 -->
+	<section class="mybox" id="mybox">
+
+		<ul class="pro ">
+
+			<li v-for = 'item in finnal_pro' class="clearfix">
+				<span class="circle"></span>
+				<img v-bind:src="'img/topic/1/'+item.img">
+				<div class="info">
+				<span >{{item.brand}}</span>
+				<span>{{item.slogan}}</span>
+				<span>{{item.color}}</span>
+				<span>{{item.size}}</span>
+				
+				</div>
+				<div class="price">
+					<span >{{item.price}}</span>
+					<span >X {{item.num}}</span>
+				</div>
+			</li>
+		</ul>
+		<div class="total">
+			<span class="circle"></span><span>全选</span>
+			<span>合计 {{finnal_pro[0].price*finnal_pro[0].num}}</span>
+			<span class="pay" v-on:click = "pay">结算</span>
+		</div>
+		<div class="tip">
+			<span>未开发</span>
+		</div>	
+	</section>
+	</div>
+
+</script>
+
+<script type="text/javascript" src="js/vue.js"></script>
+<script type="text/javascript" src="js/zepto.min.js"></script>
+<script type="text/javascript" src="js/require-min.js" data-main="js/bootstrap.js"></script>
+<script type="text/javascript">
+	//前端怎么处理数据。
+	//组件间怎么传递一些数据。
+	//怎么处理重复性的数据。
+</script>
+</body>
+</html>
